@@ -1,0 +1,9 @@
+steps:
+- name: node
+  entrypoint: yarn
+  args: ['install']
+- name: node
+  entrypoint: yarn
+  args: ['run', 'prod-build']
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: ['-m', 'cp', '-R', './dist/*', 'gs://slide4vr.nklab.dev']
