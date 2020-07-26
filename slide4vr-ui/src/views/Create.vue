@@ -1,5 +1,11 @@
 <template>
   <div class="container">
+    <loading
+      :active.sync="isLoading"
+      :can-cancel="true"
+      :on-cancel="onCancel"
+      :is-full-page="fullPage"
+    ></loading>
     <div class="card">
       <div class="card-header">
         <h2>スライドのアップロード</h2>
@@ -28,7 +34,13 @@
 </template>
 
 <script>
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
+
 export default {
+  components: {
+    loading: Loading,
+  },
   data() {
     return {
       item: {
@@ -37,6 +49,8 @@ export default {
       },
       filepath: "ここにスライドをアップロード",
       message: "",
+      isLoading: false,
+      fullPage: true,
     };
   },
   methods: {
@@ -47,6 +61,7 @@ export default {
       data.append("title", this.item.title);
       data.append("slide", this.item.files[0]);
 
+      this.isLoading = true;
       this.axios
         .post(uri, data)
         .then(() => {
@@ -54,11 +69,16 @@ export default {
             icon: "success",
             text: "Upload Success!",
           });
-          //   this.$router.push({ name: "Index" });
+          this.isLoading = false;
+          this.$router.push({ name: "Index" });
         })
         .catch((error) => {
+          this.isLoading = false;
           this.message = `status: ${error.response.status}, message: ${error.response.data}`;
         });
+    },
+    onCancel: function () {
+      console.log("User cancelled the loader.");
     },
     onDrop: function (event) {
       this.item.files = event.target.files;
