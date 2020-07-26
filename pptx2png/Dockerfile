@@ -3,7 +3,7 @@ FROM debian
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libreoffice \
-        fonts-noto-cjk-extra \
+        fonts-noto-cjk-extra fonts-liberation2 \
         imagemagick \
         poppler-utils \
         xpdf \
