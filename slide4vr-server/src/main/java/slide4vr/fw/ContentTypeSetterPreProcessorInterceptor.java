@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package slide4vr;
+package slide4vr.fw;
 
 import java.nio.charset.StandardCharsets;
 import javax.servlet.http.HttpServletRequest;
