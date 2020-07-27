@@ -18,8 +18,8 @@ gcloud run deploy endpoint-slide4vr-api \
 ```bash
 gcloud run deploy endpoint-slide4vr-api \
     --region us-central1 \
-    --image="gcr.io/slide2vr/endpoints-runtime-serverless:2.14.0-endpoint-slide4vr-api-dnb6froqha-uc.a.run.app-2020-07-27r0" \
-    --set-env-vars=ESPv2_ARGS=--cors_preset=basic \
+    --image="gcr.io/slide2vr/endpoints-runtime-serverless:2.14.0-endpoint-slide4vr-api-dnb6froqha-uc.a.run.app-2020-07-27r1" \
+    --set-env-vars=ESPv2_ARGS=^++^--cors_preset=basic++--tracing_outgoing_context=traceparent++--tracing_sample_rate=1.0 \
     --allow-unauthenticated \
     --platform managed 
 ```

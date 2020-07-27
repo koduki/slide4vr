@@ -6,11 +6,9 @@
 package slide4vr.fw;
 
 import javax.annotation.Priority;
-import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -20,9 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 @Priority(Interceptor.Priority.APPLICATION)
 @Trace
 public class TraceIntersepter {
-
-    @Inject
-    HttpServletRequest req;
 
     @AroundInvoke
     public Object invoke(InvocationContext ic) throws Exception {

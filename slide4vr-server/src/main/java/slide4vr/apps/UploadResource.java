@@ -33,6 +33,7 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import slide4vr.fw.Trace;
+import slide4vr.fw.WebTrace;
 
 @Path("/slide")
 public class UploadResource {
@@ -55,7 +56,7 @@ public class UploadResource {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Trace
+    @WebTrace
     public Response list() throws IOException {
         var datastore = DatastoreOptions.getDefaultInstance().getService();
         var query = Query.newEntityQueryBuilder()
@@ -81,7 +82,7 @@ public class UploadResource {
     @Path("{key}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Trace
+    @WebTrace
     public Response get(@PathParam("key") String key) throws IOException {
         var result = new ArrayList<String>();
 
@@ -102,7 +103,7 @@ public class UploadResource {
     @POST
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     @Produces(MediaType.APPLICATION_JSON)
-    @Trace
+    @WebTrace
     public Response upload(@MultipartForm SlideFormBean slide) throws IOException {
         var data = slide.getSlide();
         var key = UUID.randomUUID().toString();
