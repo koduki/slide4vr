@@ -11,11 +11,8 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import io.opencensus.contrib.http.jaxrs.JaxrsClientFilter;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +25,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -124,14 +123,16 @@ public class UploadResource {
     @Trace
     public void callPptx2pngAPI(String key) {
         var dirName = dir + "/" + key;
-        var client = HttpClient.newHttpClient();
-        var request = HttpRequest.newBuilder()
-                .uri(URI.create(pptx2pngUrl + "?args=" + dirName))
-                .build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenAccept(System.out::println)
-                .join();
+
+        var target = ClientBuilder.newClient()
+                .target(pptx2pngUrl)
+                .path("/")
+                .queryParam("args", dirName);
+
+        target.register(JaxrsClientFilter.class);
+        target.request(MediaType.APPLICATION_JSON)
+                .get(new GenericType<String>() {
+                });
     }
 
     @Trace
