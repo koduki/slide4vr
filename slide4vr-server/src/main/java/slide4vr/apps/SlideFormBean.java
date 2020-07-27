@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package slide4vr;
+package slide4vr.apps;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.core.MediaType;

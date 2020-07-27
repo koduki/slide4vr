@@ -1,4 +1,4 @@
-package slide4vr;
+package slide4vr.apps;
 
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
@@ -11,11 +11,8 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import io.opencensus.contrib.http.jaxrs.JaxrsClientFilter;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,10 +25,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import slide4vr.fw.Trace;
+import slide4vr.fw.WebTrace;
 
 @Path("/slide")
 public class UploadResource {
@@ -54,6 +55,7 @@ public class UploadResource {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @WebTrace
     public Response list() throws IOException {
         var datastore = DatastoreOptions.getDefaultInstance().getService();
         var query = Query.newEntityQueryBuilder()
@@ -79,6 +81,7 @@ public class UploadResource {
     @Path("{key}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @WebTrace
     public Response get(@PathParam("key") String key) throws IOException {
         var result = new ArrayList<String>();
 
@@ -96,17 +99,10 @@ public class UploadResource {
                 .build();
     }
 
-    private Iterable<Blob> readBucket(String key) {
-        var storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        var bucket = storage.get(bucketSlideName);
-        var option = Storage.BlobListOption.prefix(dir + "/" + key);
-
-        return bucket.list(option).iterateAll();
-    }
-
     @POST
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     @Produces(MediaType.APPLICATION_JSON)
+    @WebTrace
     public Response upload(@MultipartForm SlideFormBean slide) throws IOException {
         var data = slide.getSlide();
         var key = UUID.randomUUID().toString();
@@ -124,26 +120,31 @@ public class UploadResource {
                 .build();
     }
 
-    private void callPptx2pngAPI(String key) {
+    @Trace
+    public void callPptx2pngAPI(String key) {
         var dirName = dir + "/" + key;
-        var client = HttpClient.newHttpClient();
-        var request = HttpRequest.newBuilder()
-                .uri(URI.create(pptx2pngUrl + "?args=" + dirName))
-                .build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenAccept(System.out::println)
-                .join();
+
+        var target = ClientBuilder.newClient()
+                .target(pptx2pngUrl)
+                .path("/")
+                .queryParam("args", dirName);
+
+        target.register(JaxrsClientFilter.class);
+        target.request(MediaType.APPLICATION_JSON)
+                .get(new GenericType<String>() {
+                });
     }
 
-    private void upload2gcs(byte[] data) {
+    @Trace
+    public void upload2gcs(byte[] data) {
         var storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
         var blobId = BlobId.of(bucketPptxName, objectName);
         var blobInfo = BlobInfo.newBuilder(blobId).build();
         storage.create(blobInfo, data);
     }
 
-    private void storeData(String key, SlideFormBean slide) {
+    @Trace
+    public void storeData(String key, SlideFormBean slide) {
         var tz = TimeZone.getTimeZone("UTC");
         var df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
         df.setTimeZone(tz);
@@ -155,5 +156,14 @@ public class UploadResource {
                 .set("created_at", df.format(new Date()))
                 .build();
         datastore.put(task);
+    }
+
+    @Trace
+    public Iterable<Blob> readBucket(String key) {
+        var storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+        var bucket = storage.get(bucketSlideName);
+        var option = Storage.BlobListOption.prefix(dir + "/" + key);
+
+        return bucket.list(option).iterateAll();
     }
 }

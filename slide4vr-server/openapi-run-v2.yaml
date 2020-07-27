@@ -1,0 +1,51 @@
+swagger: '2.0'
+info:
+  title: Endpooint of slide4vr-api
+  version: '1.0'
+host: endpoint-slide4vr-api-dnb6froqha-uc.a.run.app
+schemes:
+  - https
+produces:
+  - application/json
+paths:
+  /slide:
+    get:
+      operationId: 'getSlideList'
+      parameters: []
+      responses:
+        '200':
+          description: OK
+    post:
+      operationId: 'upload'
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: title
+          type: string
+        - collectionFormat: csv
+          in: formData
+          items:
+            format: byte
+            type: string
+          name: slide
+          type: array
+      responses:
+        '200':
+          description: OK
+  '/slide/{key}':
+    get:
+      operationId: 'getSlideUrls'
+      parameters:
+        - in: path
+          name: key
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+x-google-backend:
+  address: 'https://slide4vr-api-dnb6froqha-uc.a.run.app'
+  protocol: h2
+  deadline: 60.0
+
