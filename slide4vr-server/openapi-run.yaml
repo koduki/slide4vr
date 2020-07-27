@@ -1,0 +1,47 @@
+---
+openapi: 3.0.1
+info:
+  title: Cloud Endpoints + Cloud Run
+  version: "1.0"
+host: endpoint-slide4vr-api-dnb6froqha-uc.a.run.app
+schemes:
+  - https
+produces:
+  - application/json
+x-google-backend:
+  address: https://slide4vr-api-dnb6froqha-uc.a.run.app
+  protocol: h2
+paths:
+  /slide:
+    get:
+      responses:
+        "200":
+          description: OK
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                slide:
+                  type: array
+                  items:
+                    format: byte
+                    type: string
+      responses:
+        "200":
+          description: OK
+  /slide/{key}:
+    get:
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
