@@ -22,11 +22,15 @@ public class Bootstrap {
 
     @ConfigProperty(name = "slide4vr.gcp.projectid")
     String projectId;
+    @ConfigProperty(name = "slide4vr.profile.trace")
+    boolean isTrace;
 
     public void handle(@Observes @Initialized(ApplicationScoped.class) Object event) throws IOException {
-        StackdriverTraceExporter.createAndRegister(
-                StackdriverTraceConfiguration.builder()
-                        .setProjectId(projectId)
-                        .build());
+        if (isTrace) {
+            StackdriverTraceExporter.createAndRegister(
+                    StackdriverTraceConfiguration.builder()
+                            .setProjectId(projectId)
+                            .build());
+        }
     }
 }

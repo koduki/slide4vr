@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Index from '../views/Index.vue'
 import Create from '../views/Create.vue'
+import Signin from '../views/Signin.vue'
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ Vue.use(VueRouter)
     path: '/create',
     name: 'Create',
     component: Create
+  },
+  {
+    path: '/signin',
+    name: 'Signin',
+    component: Signin
   }
 ]
 
