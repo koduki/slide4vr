@@ -13,6 +13,7 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.servlet.http.HttpServletRequest;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  *
@@ -31,21 +32,28 @@ public class WebTraceIntersepter {
         }
     };
 
+    @ConfigProperty(name = "slide4vr.profile.trace")
+    boolean isTrace;
+
     @Inject
     HttpServletRequest req;
 
     @AroundInvoke
     public Object invoke(InvocationContext ic) throws Exception {
-        var spanContext = textFormat.extract(req, getter);
-        var url = req.getRequestURI();
-        var method = req.getMethod();
+        if (isTrace && req.getHeader("traceparent") != null) {
+            var spanContext = textFormat.extract(req, getter);
+            var url = req.getRequestURI();
+            var method = req.getMethod();
 
-        return DistributedTrace.trace(method + "#" + url, spanContext, () -> {
-            try {
-                return ic.proceed();
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+            return DistributedTrace.trace(method + "#" + url, spanContext, () -> {
+                try {
+                    return ic.proceed();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        } else {
+            return ic.proceed();
+        }
     }
 }
