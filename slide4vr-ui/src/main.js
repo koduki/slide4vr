@@ -7,6 +7,7 @@ import VueSweetalert2 from "vue-sweetalert2";
 import store from "@/store";
 import Auth from "@/modules/auth";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import "../node_modules/@fortawesome/fontawesome-free/css/fontawesome.min.css";
 import "../node_modules/sweetalert2/dist/sweetalert2.min.css";
 
 Vue.config.productionTip = false;

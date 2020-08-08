@@ -1,32 +1,33 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link>|
-      <router-link to="/create">Upload</router-link>|
+    <div
+      class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm"
+    >
+      <h5 class="my-0 mr-md-auto font-weight-normal">
+        <router-link class="title-logo" to="home">Slide4VR</router-link>
+      </h5>
+      <div v-show="$store.state.user.id">
+        <router-link  class="btn btn-outline-primary" to="create">スライドを登録</router-link>
+        <a class="btn" href="#">
+          <img class=".avatar" :src="$store.state.user.pic" width="32px" height="32px" alt />
+        </a>
+      </div>
     </div>
     <router-view />
   </div>
 </template>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+.avatar {
+  border-radius: 100%;
+  overflow: hidden;
+  display: inline-block;
 }
 
-#nav {
-  text-align: center;
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.title-logo a {
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
+  color: #000000;
 }
 </style>

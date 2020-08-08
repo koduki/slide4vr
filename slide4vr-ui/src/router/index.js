@@ -1,8 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Index from "../views/Index.vue";
-import Create from "../views/Create.vue";
-import Signin from "../views/Signin.vue";
+import Login from "@/views/Login.vue";
+import Home from "@/views/Home.vue";
+import Create from "@/views/Create.vue";
 
 // store
 import Store from "@/store";
@@ -12,8 +12,13 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "Index",
-    component: Index,
+    name: "Login",
+    component: Login,
+  },
+  {
+    path: "/home",
+    name: "Home",
+    component: Home,
     meta: { requiresAuth: true },
   },
   {
@@ -21,11 +26,6 @@ const routes = [
     name: "Create",
     component: Create,
     meta: { requiresAuth: true },
-  },
-  {
-    path: "/signin",
-    name: "Signin",
-    component: Signin,
   },
 ];
 
@@ -40,7 +40,7 @@ router.beforeEach((to, from, next) => {
     to.matched.some((record) => record.meta.requiresAuth) &&
     !Store.state.user.token
   ) {
-    next({ path: "/signin", query: { redirect: to.fullPath } });
+    next({ path: "/", query: { redirect: to.fullPath } });
   } else {
     next();
   }

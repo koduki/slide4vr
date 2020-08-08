@@ -8,7 +8,7 @@
     ></loading>
     <div class="card">
       <div class="card-header">
-        <h2>スライド一覧</h2>
+        <h2>{{this.$store.state.user.name}} さんのスライド一覧</h2>
       </div>
       <div class="container">
         <table class="table">
@@ -64,7 +64,13 @@ export default {
     fetchSlide() {
       const uri = process.env.VUE_APP_API_BASE_URL + "/slide";
       this.isLoading = true;
-      this.axios.get(uri).then((response) => {
+
+      const config = {
+        headers: {
+          Authorization: "Bearer " + this.$store.state.user.token,
+        },
+      };
+      this.axios.get(uri, config).then((response) => {
         this.slides = response.data;
         this.isLoading = false;
       });

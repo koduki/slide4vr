@@ -5,7 +5,6 @@ export default {
     name: "",
     token: "",
     pic: "",
-    expiration_time: "",
   },
   mutations: {
     store(state, user) {
@@ -13,10 +12,9 @@ export default {
       state.token = user.token;
       state.name = user.name;
       state.pic = user.pic;
-      state.expiration_time = user.expiration_time;
     },
     drop(state) {
-      state.id = state.token = state.name = state.pic = state.expiration_time = "";
+      state.id = state.token = state.name = state.pic = "";
     },
   },
   actions: {

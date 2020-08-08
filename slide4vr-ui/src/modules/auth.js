@@ -1,5 +1,5 @@
-import firebase from "firebase";
-import axios from "axios";
+import firebase from "firebase/app";
+import "firebase/auth";
 import store from "@/store";
 
 export default {
@@ -10,38 +10,28 @@ export default {
     };
     firebase.initializeApp(config);
   },
-  loginWithTwitter() {
-    this.login(new firebase.auth.TwitterAuthProvider());
+  loginWithTwitter(callback) {
+    this.login(new firebase.auth.TwitterAuthProvider(), callback);
   },
-  loginWithGoogle() {
-    this.login(new firebase.auth.GoogleAuthProvider());
+  loginWithGoogle(callback) {
+    this.login(new firebase.auth.GoogleAuthProvider(), callback);
   },
-  login(provider) {
-    const callApi = (token) => {
-      const url = "http://localhost:8080/secured";
-      const config = {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      };
-      axios.get(url, config).then((response) => {
-        store.dispatch("user/store", {
-          id: response.data.id,
-          token: token,
-          name: response.data.name,
-          expiration_time: new Date(response.data.expiration_time * 1000),
-          pic: response.data.picture,
-        });
-      });
-    };
-
+  login(provider, callback) {
     firebase
       .auth()
       .signInWithPopup(provider)
       .then((res) => {
         res.user
           .getIdToken()
-          .then(callApi)
+          .then(function(token) {
+            store.dispatch("user/store", {
+              id: res.user.uid,
+              token: token,
+              name: res.user.displayName,
+              pic: res.user.photoURL,
+            });
+            callback();
+          })
           .catch((error) => {
             console.log(error);
             this.errorMessage = error.message;

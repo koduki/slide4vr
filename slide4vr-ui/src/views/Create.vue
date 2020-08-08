@@ -62,15 +62,21 @@ export default {
       data.append("slide", this.item.files[0]);
 
       this.isLoading = true;
+
+      const config = {
+        headers: {
+          Authorization: "Bearer " + this.$store.state.user.token,
+        },
+      };
       this.axios
-        .post(uri, data)
+        .post(uri, data, config)
         .then(() => {
           this.$swal({
             icon: "success",
             text: "Upload Success!",
           });
           this.isLoading = false;
-          this.$router.push({ name: "Index" });
+          this.$router.push({ name: "Home" });
         })
         .catch((error) => {
           this.isLoading = false;

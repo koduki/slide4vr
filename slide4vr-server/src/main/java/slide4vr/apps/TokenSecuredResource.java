@@ -7,6 +7,7 @@ package slide4vr.apps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.security.Authenticated;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class TokenSecuredResource {
     JsonWebToken jwt;
 
     @GET
-    @PermitAll
+    @Authenticated
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@Context SecurityContext ctx) throws JsonProcessingException {
         var caller = ctx.getUserPrincipal();

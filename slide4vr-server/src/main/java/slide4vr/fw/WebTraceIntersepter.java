@@ -5,8 +5,6 @@
  */
 package slide4vr.fw;
 
-import io.opencensus.trace.Tracing;
-import io.opencensus.trace.propagation.TextFormat;
 import javax.annotation.Priority;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
@@ -24,14 +22,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @WebTrace
 public class WebTraceIntersepter {
 
-    private static final TextFormat textFormat = Tracing.getPropagationComponent().getTraceContextFormat();
-    private static final TextFormat.Getter<HttpServletRequest> getter = new TextFormat.Getter<HttpServletRequest>() {
-        @Override
-        public String get(HttpServletRequest httpRequest, String s) {
-            return httpRequest.getHeader(s);
-        }
-    };
-
     @ConfigProperty(name = "slide4vr.profile.trace")
     boolean isTrace;
 
@@ -40,20 +30,15 @@ public class WebTraceIntersepter {
 
     @AroundInvoke
     public Object invoke(InvocationContext ic) throws Exception {
-        if (isTrace && req.getHeader("traceparent") != null) {
-            var spanContext = textFormat.extract(req, getter);
-            var url = req.getRequestURI();
-            var method = req.getMethod();
+        var url = req.getRequestURI();
+        var method = req.getMethod();
 
-            return DistributedTrace.trace(method + "#" + url, spanContext, () -> {
-                try {
-                    return ic.proceed();
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
-        } else {
-            return ic.proceed();
-        }
+        return DistributedTracer.trace().isTrace(isTrace).apply(method + "#" + url, req, () -> {
+            try {
+                return ic.proceed();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
     }
 }

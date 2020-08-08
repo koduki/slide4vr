@@ -28,16 +28,12 @@ public class TraceIntersepter {
         var classAndMethod = ic.getTarget().getClass()
                 .getSuperclass().getName()
                 + "#" + ic.getMethod().getName();
-        if (isTrace) {
-            return DistributedTrace.trace(classAndMethod, () -> {
-                try {
-                    return ic.proceed();
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
-        } else {
-            return ic.proceed();
-        }
+        return DistributedTracer.trace().isTrace(isTrace).apply(classAndMethod, () -> {
+            try {
+                return ic.proceed();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
     }
 }
