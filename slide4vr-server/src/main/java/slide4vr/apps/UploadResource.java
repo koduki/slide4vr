@@ -131,7 +131,7 @@ public class UploadResource {
         var data = slide.getSlide();
         var key = UUID.randomUUID().toString();
 
-        upload2gcs(id, data);
+        upload2gcs(id, key, data);
         storeData(id, key, slide);
         callPptx2pngAPI(id, key);
 
@@ -144,12 +144,13 @@ public class UploadResource {
 
     @Trace
     public void callPptx2pngAPI(String id, String key) {
-        var dirName = id + "/" + key;
+        var pptxName = id + "/" + key + ".pptx";
+        var pngDir = id + "/" + key;
 
         var target = ClientBuilder.newClient()
                 .target(pptx2pngUrl)
                 .path("/")
-                .queryParam("args", dirName);
+                .queryParam("args", pptxName + "," + pngDir);
 
         target.register(JaxrsClientFilter.class);
         target.request(MediaType.APPLICATION_JSON)
@@ -158,9 +159,9 @@ public class UploadResource {
     }
 
     @Trace
-    public void upload2gcs(String id, byte[] data) {
+    public void upload2gcs(String id, String key, byte[] data) {
         var storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        var blobId = BlobId.of(bucketPptxName, id + "/" + objectName);
+        var blobId = BlobId.of(bucketPptxName, id + "/" + key + ".pptx");
         var blobInfo = BlobInfo.newBuilder(blobId).build();
         storage.create(blobInfo, data);
     }
