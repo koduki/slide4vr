@@ -1,17 +1,14 @@
 ---
 openapi: 3.0.1
 info:
-  title: Cloud Endpoints + Cloud Run
+  title: Generated API
   version: "1.0"
-host: endpoint-slide4vr-api-dnb6froqha-uc.a.run.app
-schemes:
-  - https
-produces:
-  - application/json
-x-google-backend:
-  address: https://slide4vr-api-dnb6froqha-uc.a.run.app
-  protocol: h2
 paths:
+  /secured:
+    get:
+      responses:
+        "200":
+          description: OK
   /slide:
     get:
       responses:

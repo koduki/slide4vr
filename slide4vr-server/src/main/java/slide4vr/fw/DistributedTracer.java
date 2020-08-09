@@ -68,15 +68,19 @@ public class DistributedTracer {
     }
 
     public <R> R apply(String name, HttpServletRequest request, Supplier<R> callback) {
-        if (isTrace && request.getHeader("traceparent") != null) {
+        if (isTrace) {
             try {
-                var spanContext = textFormat.extract(request, getter);
-                try ( var ss = Tracing.getTracer()
-                        .spanBuilderWithRemoteParent(name, spanContext)
-                        .setRecordEvents(true)
-                        .setSampler(Samplers.alwaysSample())
-                        .startScopedSpan()) {
-                    return callback.get();
+                if (request.getHeader("traceparent") != null) {
+                    var spanContext = textFormat.extract(request, getter);
+                    try ( var ss = Tracing.getTracer()
+                            .spanBuilderWithRemoteParent(name, spanContext)
+                            .setRecordEvents(true)
+                            .setSampler(Samplers.alwaysSample())
+                            .startScopedSpan()) {
+                        return callback.get();
+                    }
+                } else {
+                    return apply(name, callback);
                 }
             } catch (SpanContextParseException ex) {
                 throw new RuntimeException(ex);

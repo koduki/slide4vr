@@ -124,7 +124,7 @@
     <div class="container">
       <div class="row">
         <div class="col-12 text-center text-sm">
-          <p class="mb-0">Provided by なからぼ</p>
+          <p class="mb-0">Powered by なからぼ</p>
         </div>
       </div>
     </div>
