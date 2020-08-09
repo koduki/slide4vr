@@ -32,7 +32,12 @@ export default {
     },
     loadJsonTemplate: function (key) {
       const uri = process.env.VUE_APP_API_BASE_URL + "/slide/" + key;
-      this.axios.get(uri).then((response) => {
+      const config = {
+        headers: {
+          Authorization: "Bearer " + this.$store.state.user.token,
+        },
+      };
+      this.axios.get(uri, config).then((response) => {
         this.jsonTemplate = JSON.stringify(response.data, null, "  ")
           .slice(1, -2)
           .trim();

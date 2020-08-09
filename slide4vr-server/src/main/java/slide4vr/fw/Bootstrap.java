@@ -5,8 +5,6 @@
  */
 package slide4vr.fw;
 
-import io.opencensus.exporter.trace.stackdriver.StackdriverTraceConfiguration;
-import io.opencensus.exporter.trace.stackdriver.StackdriverTraceExporter;
 import java.io.IOException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
@@ -22,11 +20,12 @@ public class Bootstrap {
 
     @ConfigProperty(name = "slide4vr.gcp.projectid")
     String projectId;
+    @ConfigProperty(name = "slide4vr.profile.trace")
+    boolean isTrace;
 
     public void handle(@Observes @Initialized(ApplicationScoped.class) Object event) throws IOException {
-        StackdriverTraceExporter.createAndRegister(
-                StackdriverTraceConfiguration.builder()
-                        .setProjectId(projectId)
-                        .build());
+        DistributedTracer.trace()
+                .isTrace(isTrace)
+                .init(projectId);
     }
 }

@@ -10,14 +10,17 @@
     "prod-build": "vue-cli-service build --mode production"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.14.0",
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
     "core-js": "^3.6.5",
+    "firebase": "^7.17.1",
     "vue": "^2.6.11",
     "vue-axios": "^2.1.5",
     "vue-loading-overlay": "^3.3.2",
     "vue-router": "^3.2.0",
-    "vue-sweetalert2": "^3.0.6"
+    "vue-sweetalert2": "^3.0.6",
+    "vuex": "^3.5.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.4.0",

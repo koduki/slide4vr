@@ -9,6 +9,7 @@ import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  *
@@ -19,12 +20,15 @@ import javax.interceptor.InvocationContext;
 @Trace
 public class TraceIntersepter {
 
+    @ConfigProperty(name = "slide4vr.profile.trace")
+    boolean isTrace;
+
     @AroundInvoke
     public Object invoke(InvocationContext ic) throws Exception {
         var classAndMethod = ic.getTarget().getClass()
                 .getSuperclass().getName()
                 + "#" + ic.getMethod().getName();
-        return DistributedTrace.trace(classAndMethod, () -> {
+        return DistributedTracer.trace().isTrace(isTrace).apply(classAndMethod, () -> {
             try {
                 return ic.proceed();
             } catch (Exception ex) {

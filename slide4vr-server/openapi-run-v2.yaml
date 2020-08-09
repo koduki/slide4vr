@@ -8,6 +8,15 @@ schemes:
 produces:
   - application/json
 paths:
+  /secured:
+    get:
+      operationId: 'getSecured'
+      security:
+        - firebase: []
+      parameters: []
+      responses:
+        '200':
+          description: OK
   /slide:
     get:
       operationId: 'getSlideList'
@@ -44,6 +53,14 @@ paths:
       responses:
         '200':
           description: OK
+securityDefinitions:
+  firebase:
+    authorizationUrl: ""
+    flow: "implicit"
+    type: "oauth2"
+    x-google-issuer: "https://securetoken.google.com/slide2vr"
+    x-google-jwks_uri: "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+    x-google-audiences: "slide2vr"
 x-google-backend:
   address: 'https://slide4vr-api-dnb6froqha-uc.a.run.app'
   protocol: h2
