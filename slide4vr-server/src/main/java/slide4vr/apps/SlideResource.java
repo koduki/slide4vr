@@ -19,10 +19,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import static cn.orz.pascal.jl2.Extentions.*;
 import dev.nklab.jl2.profile.WebTrace;
+import dev.nklab.jl2.logging.Logger;
 
 @Path("/slide")
 public class SlideResource {
+
+    private final Logger logger = Logger.getLogger("slide4vr");
 
     @Inject
     JsonWebToken jwt;
@@ -40,7 +44,7 @@ public class SlideResource {
     @Authenticated
     public Response list(@Context SecurityContext ctx) throws IOException {
         var id = ctx.getUserPrincipal().getName();
-        System.out.println("id: " + id);
+        logger.debug("init", $("id", id));
 
         var slides = slideService.listSlides(id);
         return Response.ok(new ObjectMapper().writeValueAsString(slides))
@@ -87,5 +91,4 @@ public class SlideResource {
                         slide.getSlide().length))
                 .build();
     }
-
 }

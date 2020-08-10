@@ -5,6 +5,8 @@
  */
 package dev.nklab.jl2.profile;
 
+import static cn.orz.pascal.jl2.Extentions.*;
+import dev.nklab.jl2.logging.Logger;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceConfiguration;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceExporter;
 import io.opencensus.trace.Tracing;
@@ -20,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
  * @author koduki
  */
 public class DistributedTracer {
+
+    private final Logger logger = Logger.getLogger("dev.nklab.jl2.profile");
 
     private static final TextFormat textFormat = Tracing.getPropagationComponent().getTraceContextFormat();
     private static final TextFormat.Getter<HttpServletRequest> getter = new TextFormat.Getter<HttpServletRequest>() {
@@ -46,7 +50,7 @@ public class DistributedTracer {
 
     public void init(String projectId) throws IOException {
         if (isTrace) {
-            System.out.println("init: GCP Cloud Tracing.");
+            logger.info("init", $("msg", "GCP Cloud Tracing"));
             StackdriverTraceExporter.createAndRegister(
                     StackdriverTraceConfiguration.builder()
                             .setProjectId(projectId)
