@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 public class Logger {
 
     private static java.util.logging.Logger logger;
-    private static Logger self = null;
 
     private Logger() {
     }

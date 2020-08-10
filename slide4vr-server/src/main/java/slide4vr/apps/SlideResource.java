@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.security.Authenticated;
 import java.io.IOException;
-import java.util.UUID;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -22,6 +21,7 @@ import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import static cn.orz.pascal.jl2.Extentions.*;
 import dev.nklab.jl2.profile.WebTrace;
 import dev.nklab.jl2.logging.Logger;
+import javax.ws.rs.DELETE;
 
 @Path("/slide")
 public class SlideResource {
@@ -75,20 +75,29 @@ public class SlideResource {
     @Produces(MediaType.APPLICATION_JSON)
     @WebTrace
     @Authenticated
-    public Response upload(@Context SecurityContext ctx, @MultipartForm SlideFormBean slide) throws IOException {
+    public Response create(@Context SecurityContext ctx, @MultipartForm SlideFormBean slide) throws IOException {
         var id = ctx.getUserPrincipal().getName();
-
-        var data = slide.getSlide();
-        var key = UUID.randomUUID().toString();
-
-        slideService.upload(id, key, data);
-        slideService.create(id, key, slide);
+        var key = slideService.create(id, slide);
         pptx2pngService.request(id, key);
 
         return Response.ok(
                 String.format("{message:'%s', data-size:'%d'}",
                         slide.getTitle(),
                         slide.getSlide().length))
+                .build();
+    }
+
+    @DELETE
+    @Path("{key}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @WebTrace
+    @Authenticated
+    public Response delete(@Context SecurityContext ctx, @PathParam("key") String key) throws IOException {
+        var id = ctx.getUserPrincipal().getName();
+        var result = slideService.delete(id, key);
+
+        return Response.ok(String.format("{delete:'%s', status: %s}", key, result))
                 .build();
     }
 }

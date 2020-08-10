@@ -5,8 +5,6 @@ import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.PathElement;
 import com.google.cloud.datastore.Query;
 import com.google.cloud.datastore.StructuredQuery;
-import com.google.cloud.storage.BlobId;
-import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import java.text.SimpleDateFormat;
@@ -18,6 +16,8 @@ import java.util.TimeZone;
 import javax.enterprise.context.Dependent;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import dev.nklab.jl2.profile.Trace;
+import java.util.UUID;
+import javax.inject.Inject;
 
 /**
  *
@@ -26,34 +26,26 @@ import dev.nklab.jl2.profile.Trace;
 @Dependent
 public class SlideService {
 
-    private static final String BASE_URL = "https://storage.googleapis.com";
+    @Inject
+    SlideUploader uploader;
 
     @ConfigProperty(name = "slide4vr.gcp.projectid")
     String projectId;
-    @ConfigProperty(name = "slide4vr.gcp.bucketname.pptx")
-    String bucketPptxName;
     @ConfigProperty(name = "slide4vr.gcp.bucketname.slide")
-    String bucketSlideName;
-    @ConfigProperty(name = "slide4vr.pptx2png.object")
-    String objectName;
+    String slideBucket;
 
     @Trace
-    public void upload(String id, String key, byte[] data) {
-        var storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        var blobId = BlobId.of(bucketPptxName, id + "/" + key + ".pptx");
-        var blobInfo = BlobInfo.newBuilder(blobId).build();
-        storage.create(blobInfo, data);
-    }
-
-    @Trace
-    public void create(String id, String key, SlideFormBean slide) {
+    public String create(String userId, SlideFormBean slide) {
         var tz = TimeZone.getTimeZone("UTC");
         var df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
         df.setTimeZone(tz);
 
+        var key = UUID.randomUUID().toString();
+        uploader.upload(userId, key, slide.getSlide());
+
         var datastore = DatastoreOptions.getDefaultInstance().getService();
         var slideKey = datastore.newKeyFactory()
-                .addAncestors(PathElement.of("User", id))
+                .addAncestors(PathElement.of("User", userId))
                 .setKind("Slide")
                 .newKey(key);
         var task = Entity.newBuilder(slideKey)
@@ -61,19 +53,34 @@ public class SlideService {
                 .set("created_at", df.format(new Date()))
                 .build();
         datastore.put(task);
+
+        return key;
     }
 
     @Trace
-    public Map<String, Map<String, List<String>>> getSlide(String id, String key) {
+    public boolean delete(String userId, String key) {
+        var datastore = DatastoreOptions.getDefaultInstance().getService();
+        var slideKey = datastore.newKeyFactory()
+                .addAncestors(PathElement.of("User", userId))
+                .setKind("Slide")
+                .newKey(key);
+        datastore.delete(slideKey);
+        return uploader.delete(userId, key);
+    }
+
+    @Trace
+    public Map<String, Map<String, List<String>>> getSlide(String userId, String key) {
+        var baseUrl = "https://storage.googleapis.com";
+
         var storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        var bucket = storage.get(bucketSlideName);
-        var option = Storage.BlobListOption.prefix(id + "/" + key);
+        var bucket = storage.get(slideBucket);
+        var option = Storage.BlobListOption.prefix(userId + "/" + key);
 
         var items = bucket.list(option).iterateAll();
 
         var result = (List<String>) new ArrayList<String>();
         for (var x : items) {
-            result.add(BASE_URL + "/" + bucketSlideName + "/" + x.getName());
+            result.add(baseUrl + "/" + slideBucket + "/" + x.getName());
         }
         var item = Map.of("whiteboard", Map.of("source_urls", result));
 
@@ -81,7 +88,7 @@ public class SlideService {
     }
 
     @Trace
-    public List<Map<String, String>> listSlides(String id) {
+    public List<Map<String, String>> listSlides(String userId) {
         var datastore = DatastoreOptions.getDefaultInstance().getService();
         //        var query = Query.newGqlQueryBuilder(Query.ResultType.ENTITY,
 //                "SELECT * FROM Slide WHERE __key__ HAS ANCESTOR KEY(User, @id)")
@@ -90,7 +97,7 @@ public class SlideService {
         var query = Query.newEntityQueryBuilder()
                 .setKind("Slide")
                 .setFilter(StructuredQuery.PropertyFilter.hasAncestor(
-                        datastore.newKeyFactory().setKind("User").newKey(id)))
+                        datastore.newKeyFactory().setKind("User").newKey(userId)))
                 .build();
         var result = new ArrayList<Map<String, String>>();
         var slides = datastore.run(query);
