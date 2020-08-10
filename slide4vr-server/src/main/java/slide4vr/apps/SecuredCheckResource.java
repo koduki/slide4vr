@@ -8,13 +8,9 @@ package slide4vr.apps;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.security.Authenticated;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -25,7 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import slide4vr.fw.WebTrace;
+import dev.nklab.jl2.profile.WebTrace;
 
 /**
  *
@@ -33,7 +29,7 @@ import slide4vr.fw.WebTrace;
  */
 @Path("/secured")
 @RequestScoped
-public class TokenSecuredResource {
+public class SecuredCheckResource {
 
     @Inject
     JsonWebToken jwt;

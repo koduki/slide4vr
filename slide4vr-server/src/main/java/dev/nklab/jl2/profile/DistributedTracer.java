@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package slide4vr.fw;
+package dev.nklab.jl2.profile;
 
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceConfiguration;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceExporter;
@@ -46,6 +46,7 @@ public class DistributedTracer {
 
     public void init(String projectId) throws IOException {
         if (isTrace) {
+            System.out.println("init: GCP Cloud Tracing.");
             StackdriverTraceExporter.createAndRegister(
                     StackdriverTraceConfiguration.builder()
                             .setProjectId(projectId)
