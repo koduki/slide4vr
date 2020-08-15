@@ -84,6 +84,11 @@
             <artifactId>google-cloud-datastore</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-tasks</artifactId>
+            <version>1.30.0</version>
+        </dependency>
+        <dependency>
             <groupId>io.opencensus</groupId>
             <artifactId>opencensus-api</artifactId>
             <version>0.26.0</version>
@@ -112,6 +117,11 @@
             <groupId>cn.orz.pascal</groupId>
             <artifactId>jl2</artifactId>
             <version>0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opencensus</groupId>
+            <artifactId>opencensus-impl-core</artifactId>
+            <version>0.26.0</version>
         </dependency>
     </dependencies>
     <build>

@@ -1,5 +1,6 @@
 package slide4vr.apps;
 
+import static cn.orz.pascal.jl2.Extentions.*;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +19,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import static cn.orz.pascal.jl2.Extentions.*;
 import dev.nklab.jl2.profile.WebTrace;
 import dev.nklab.jl2.logging.Logger;
 import javax.ws.rs.DELETE;
