@@ -7,6 +7,7 @@ package dev.nklab.jl2.profile;
 
 import java.io.IOException;
 import javax.enterprise.context.Dependent;
+import javax.inject.Named;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
@@ -20,6 +21,10 @@ public class TracingBootstrap {
     String projectId;
     @ConfigProperty(name = "dev.nklab.profile.trace")
     boolean isTrace;
+
+    public TracingBootstrap() {
+    }
+    
 
     public void init() throws IOException {
         DistributedTracer.trace()
