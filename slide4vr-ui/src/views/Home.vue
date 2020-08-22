@@ -24,6 +24,10 @@
               <input type="hidden" :value="item.key" />
               <button @click="openModal">表示する</button>
             </td>
+            <td>
+              <input type="hidden" :value="item.key" />
+              <button @click="onClickDelete">削除する</button>
+            </td>
           </tr>
         </table>
       </div>
@@ -73,6 +77,22 @@ export default {
       this.axios.get(uri, config).then((response) => {
         this.slides = response.data;
         this.isLoading = false;
+      });
+    },
+    onClickDelete: function (event) {
+      const key = event.target.parentElement.getElementsByTagName("input")[0]
+        .value;
+
+      const uri = process.env.VUE_APP_API_BASE_URL + "/slide/" + key;
+      this.isLoading = true;
+
+      const config = {
+        headers: {
+          Authorization: "Bearer " + this.$store.state.user.token,
+        },
+      };
+      this.axios.delete(uri, config).then((response) => {
+        this.fetchSlide();
       });
     },
     onCancel: function () {

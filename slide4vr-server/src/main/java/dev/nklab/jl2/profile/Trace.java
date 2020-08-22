@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package slide4vr.fw;
+package dev.nklab.jl2.profile;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package slide4vr.fw;
+package dev.nklab.jl2.profile;
 
 import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
@@ -20,7 +20,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Trace
 public class TraceIntersepter {
 
-    @ConfigProperty(name = "slide4vr.profile.trace")
+    @ConfigProperty(name = "dev.nklab.profile.trace")
     boolean isTrace;
 
     @AroundInvoke

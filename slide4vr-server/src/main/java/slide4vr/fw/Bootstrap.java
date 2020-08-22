@@ -5,11 +5,12 @@
  */
 package slide4vr.fw;
 
+import dev.nklab.jl2.profile.TracingBootstrap;
 import java.io.IOException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import javax.inject.Inject;
 
 /**
  *
@@ -17,15 +18,10 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
  */
 @ApplicationScoped
 public class Bootstrap {
-
-    @ConfigProperty(name = "slide4vr.gcp.projectid")
-    String projectId;
-    @ConfigProperty(name = "slide4vr.profile.trace")
-    boolean isTrace;
+    @Inject
+    TracingBootstrap tracingBootstrap;
 
     public void handle(@Observes @Initialized(ApplicationScoped.class) Object event) throws IOException {
-        DistributedTracer.trace()
-                .isTrace(isTrace)
-                .init(projectId);
+        tracingBootstrap.init();
     }
 }
