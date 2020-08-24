@@ -7,6 +7,7 @@ import com.google.cloud.datastore.Query;
 import com.google.cloud.datastore.StructuredQuery;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import static dev.nklab.jl2.logging.gcp.datastore.Extentions.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,8 +50,9 @@ public class SlideService {
                 .setKind("Slide")
                 .newKey(key);
         var task = Entity.newBuilder(slideKey)
-                .set("title", slide.getTitle())
-                .set("created_at", df.format(new Date()))
+                .set("title", noindex(slide.getTitle()))
+                .set("is_uploaded", noindex(false))
+                .set("created_at", noindex(df.format(new Date())))
                 .build();
         datastore.put(task);
 
@@ -106,6 +108,7 @@ public class SlideService {
             result.add(Map.of(
                     "key", slide.getKey().getName(),
                     "title", slide.getString("title"),
+                    "is_uploaded", String.valueOf(slide.getBoolean("is_uploaded")),
                     "created_at", slide.getString("created_at")
             ));
         }
