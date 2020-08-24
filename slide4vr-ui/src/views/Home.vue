@@ -15,11 +15,13 @@
           <tr>
             <th>アップロード日</th>
             <th>タイトル</th>
+            <th>ステータス</th>
             <th></th>
           </tr>
           <tr v-for="item in slides" :key="item._id">
             <td>{{ item.created_at | moment }}</td>
             <td>{{ item.title }}</td>
+            <td>{{ item.is_uploaded }}</td>
             <td>
               <input type="hidden" :value="item.key" />
               <button @click="openModal">表示する</button>
