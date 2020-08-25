@@ -18,6 +18,7 @@ import javax.inject.Inject;
  */
 @ApplicationScoped
 public class Bootstrap {
+
     @Inject
     TracingBootstrap tracingBootstrap;
 

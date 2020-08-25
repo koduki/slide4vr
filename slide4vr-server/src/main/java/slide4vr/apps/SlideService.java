@@ -90,7 +90,7 @@ public class SlideService {
     }
 
     @Trace
-    public List<Map<String, String>> listSlides(String userId) {
+    public List<Map<String, Object>> listSlides(String userId) {
         var datastore = DatastoreOptions.getDefaultInstance().getService();
         //        var query = Query.newGqlQueryBuilder(Query.ResultType.ENTITY,
 //                "SELECT * FROM Slide WHERE __key__ HAS ANCESTOR KEY(User, @id)")
@@ -101,14 +101,14 @@ public class SlideService {
                 .setFilter(StructuredQuery.PropertyFilter.hasAncestor(
                         datastore.newKeyFactory().setKind("User").newKey(userId)))
                 .build();
-        var result = new ArrayList<Map<String, String>>();
+        var result = new ArrayList<Map<String, Object>>();
         var slides = datastore.run(query);
         while (slides.hasNext()) {
             var slide = slides.next();
             result.add(Map.of(
                     "key", slide.getKey().getName(),
                     "title", slide.getString("title"),
-                    "is_uploaded", String.valueOf(slide.getBoolean("is_uploaded")),
+                    "is_uploaded", (slide.contains("is_uploaded")) ? slide.getBoolean("is_uploaded") : "false",
                     "created_at", slide.getString("created_at")
             ));
         }

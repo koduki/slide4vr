@@ -44,7 +44,7 @@ public class SlideResource {
     @Authenticated
     public Response list(@Context SecurityContext ctx) throws IOException {
         var id = ctx.getUserPrincipal().getName();
-        logger.debug("init", $("id", id));
+        logger.debug("getList", $("id", id));
 
         var slides = slideService.listSlides(id);
         return Response.ok(new ObjectMapper().writeValueAsString(slides))
