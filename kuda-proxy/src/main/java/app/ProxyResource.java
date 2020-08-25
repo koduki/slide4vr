@@ -1,7 +1,7 @@
 package app;
 
+import dev.nklab.kuda.Trigger;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,6 +9,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -19,11 +20,14 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Path("/")
 public class ProxyResource {
 
+    @Inject
+    Trigger trigger;
+
     @ConfigProperty(name = "kudaproxy.target.url")
     String targetUrl;
 
-    @ConfigProperty(name = "kudaproxy.trigger.url")
-    String triggerUrl;
+    @ConfigProperty(name = "kudaproxy.target.method")
+    String targetMethod;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -33,12 +37,21 @@ public class ProxyResource {
         System.out.println(params.get("key"));
         var targetParams = (Map<String, String>) params.get("targetParams");
 
-        var query = String.join("&",
-                targetParams.entrySet().stream()
-                        .map(x -> x.getKey() + "=" + x.getValue()).collect(Collectors.toList())
-        );
+        var query = "";
+        if ("GET".equals(targetMethod)) {
+            query = String.join("&",
+                    targetParams.entrySet().stream()
+                            .map(x -> x.getKey() + "=" + x.getValue()).collect(Collectors.toList())
+            );
+        }
 
         // Exec target application
+        callTarget(targetMethod, query);
+
+        return trigger.callTrigger(params);
+    }
+
+    void callTarget(String targetMethod, String query) throws InterruptedException, IOException {
         var client = HttpClient.newHttpClient();
         var request = HttpRequest.newBuilder()
                 .GET()
@@ -48,24 +61,5 @@ public class ProxyResource {
                 .build();
         var res = client.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("http_code:" + res.statusCode() + ", body:" + res.body());
-
-        return callTrigger(params);
-    }
-
-    String callTrigger(Map<String, Object> params) throws JsonProcessingException {
-        var client = HttpClient.newHttpClient();
-        var request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(params)))
-                .version(HttpClient.Version.HTTP_1_1)
-                .header("Content-Type", "application/json")
-                .uri(URI.create(triggerUrl))
-                .build();
-
-//       return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenAccept(System.out::println);
-
-        return "done async";
     }
 }

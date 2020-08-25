@@ -7,7 +7,6 @@ package dev.nklab.jl2.profile;
 
 import java.io.IOException;
 import javax.enterprise.context.Dependent;
-import javax.inject.Named;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
