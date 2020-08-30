@@ -1,4 +1,4 @@
-package slide4vr.apps;
+package apps;
 
 import static cn.orz.pascal.jl2.Extentions.*;
 import com.fasterxml.jackson.core.util.DefaultIndenter;

@@ -1,4 +1,4 @@
-package slide4vr.apps;
+package apps;
 
 import com.google.cloud.datastore.DatastoreOptions;
 import com.google.cloud.datastore.Entity;

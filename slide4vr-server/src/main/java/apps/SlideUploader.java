@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package slide4vr.apps;
+package apps;
 
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;

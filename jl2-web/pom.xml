@@ -17,7 +17,20 @@
             <url>https://raw.githubusercontent.com/koduki/koduki.github.io/mvn-repo/</url>
         </repository>
     </repositories>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>nklab-snapshot</id>
+            <url>gs://artifacts.slide4vr.nklab.dev/snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
     <build>
+        <extensions>
+            <extension>
+                <groupId>com.gkatzioura.maven.cloud</groupId>
+                <artifactId>google-storage-wagon</artifactId>
+                <version>1.7</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.jboss.jandex</groupId>

@@ -28,7 +28,7 @@ public class TraceIntersepter {
         var classAndMethod = ic.getTarget().getClass()
                 .getSuperclass().getName()
                 + "#" + ic.getMethod().getName();
-        return DistributedTracer.trace().isTrace(isTrace).apply(classAndMethod, () -> {
+        return DistributedTracer.trace().isTrace(isTrace).apply(classAndMethod, (t) -> {
             try {
                 return ic.proceed();
             } catch (Exception ex) {
