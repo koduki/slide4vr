@@ -7,9 +7,14 @@ package dev.nklab.jl2.profile;
 
 import static cn.orz.pascal.jl2.Extentions.*;
 import dev.nklab.jl2.logging.Logger;
+import io.opencensus.common.Scope;
+import io.opencensus.contrib.http.util.HttpTraceAttributeConstants;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceConfiguration;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceExporter;
 import io.opencensus.implcore.trace.propagation.TraceContextFormat;
+import io.opencensus.trace.AttributeValue;
+import io.opencensus.trace.Span;
+import io.opencensus.trace.SpanBuilder;
 import io.opencensus.trace.SpanContext;
 import io.opencensus.trace.Tracing;
 import io.opencensus.trace.propagation.SpanContextParseException;
@@ -19,7 +24,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
+import java.util.function.Function;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -86,40 +91,61 @@ public class DistributedTracer {
         }
     }
 
-    public <R> R apply(String name, Supplier<R> callback) {
+    public <T, R> R apply(String name, Function<Optional<Span>, R> callback) {
         if (isTrace) {
             try ( var ss = Tracing.getTracer()
                     .spanBuilder(name)
                     .setRecordEvents(true)
                     .setSampler(Samplers.alwaysSample())
                     .startScopedSpan()) {
-                return callback.get();
+                return callback.apply(Optional.of(Tracing.getTracer().getCurrentSpan()));
             }
         } else {
-            return callback.get();
+            return callback.apply(Optional.empty());
         }
     }
 
-    public <R> R apply(String name, HttpServletRequest request, Supplier<R> callback) {
+    public <T, R> R apply(String name, HttpServletRequest request, Function<Optional<Span>, R> callback) {
+        var host = request.getLocalName() + ":" + request.getLocalPort();
+        var method = request.getMethod();
+        var path = request.getContextPath();
+
+        return apply(name, request, host, method, path, callback);
+    }
+
+    public <T, R> R apply(String name, HttpServletRequest request, String host, String method, String path, Function<Optional<Span>, R> callback) throws RuntimeException {
         if (isTrace) {
-            try {
-                if (request.getHeader("traceparent") != null) {
-                    var spanContext = TEXT_FORMAT.extract(request, GETTER);
-                    try ( var ss = Tracing.getTracer()
-                            .spanBuilderWithRemoteParent(name, spanContext)
-                            .setRecordEvents(true)
-                            .setSampler(Samplers.alwaysSample())
-                            .startScopedSpan()) {
-                        return callback.get();
-                    }
-                } else {
-                    return apply(name, callback);
-                }
-            } catch (SpanContextParseException ex) {
-                throw new RuntimeException(ex);
+            try ( var ss = startScopedSpan(name, request)) {
+                var span = Tracing.getTracer().getCurrentSpan();
+                span.putAttribute(HttpTraceAttributeConstants.HTTP_HOST, AttributeValue.stringAttributeValue(host));
+                span.putAttribute(HttpTraceAttributeConstants.HTTP_METHOD, AttributeValue.stringAttributeValue(method));
+                span.putAttribute(HttpTraceAttributeConstants.HTTP_PATH, AttributeValue.stringAttributeValue(path));
+
+                return callback.apply(Optional.of(span));
             }
+
         } else {
-            return callback.get();
+            return callback.apply(Optional.empty());
         }
+    }
+
+    Scope startScopedSpan(String name, HttpServletRequest request) {
+        try {
+            SpanBuilder builder;
+            if (request.getHeader("traceparent") != null) {
+                var spanContext = TEXT_FORMAT.extract(request, GETTER);
+                builder = Tracing.getTracer().spanBuilderWithRemoteParent(name, spanContext);
+            } else {
+                builder = Tracing.getTracer().spanBuilder(name);
+            }
+
+            return builder.setRecordEvents(true)
+                    .setSampler(Samplers.alwaysSample())
+                    .startScopedSpan();
+
+        } catch (SpanContextParseException ex) {
+            throw new RuntimeException(ex);
+        }
+
     }
 }

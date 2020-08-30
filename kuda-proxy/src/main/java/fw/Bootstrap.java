@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package slide4vr.fw;
+package fw;
 
 import dev.nklab.jl2.profile.TracingBootstrap;
 import java.io.IOException;
