@@ -18,13 +18,19 @@
         </repository>
     </repositories>
     <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>NKLab repository</name>
-            <url>https://maven.pkg.github.com/koduki/slide4vr</url>
-        </repository>
+    <snapshotRepository>
+        <id>nklab-snapshot</id>
+        <url>gs://artifacts.slide4vr.nklab.dev/snapshot</url>
+    </snapshotRepository>
     </distributionManagement>
     <build>
+        <extensions>
+            <extension>
+                <groupId>com.gkatzioura.maven.cloud</groupId>
+                <artifactId>google-storage-wagon</artifactId>
+                <version>1.7</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.jboss.jandex</groupId>

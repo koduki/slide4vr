@@ -18,6 +18,17 @@
         <quarkus.platform.version>1.7.0.Final</quarkus.platform.version>
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     </properties>
+    <repositories>
+        <repository>
+            <id>koduki-repos</id>
+            <url>https://raw.githubusercontent.com/koduki/koduki.github.io/mvn-repo/</url>
+        </repository>
+        <repository>
+            <id>nklab-repos</id>
+            <name>NKLab repository</name>
+            <url>https://storage.googleapis.com/artifacts.slide4vr.nklab.dev/snapshot/</url>
+        </repository>
+    </repositories>
     <dependencyManagement>
         <dependencies>
             <dependency>
