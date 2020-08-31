@@ -21,7 +21,7 @@
         <repository>
             <id>github</id>
             <name>NKLab repository</name>
-            <url>https://maven.pkg.github.com/koduki/slide4vr</url>
+            <url>https://maven.pkg.github.com/koduki/m2repos</url>
         </repository>
     </distributionManagement>
     <build>
