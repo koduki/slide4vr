@@ -23,6 +23,6 @@ jobs:
       run: mvn -B package --file jl2-web/pom.xml
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -B --file jl2-web/pom.xml
+      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml --file jl2-web/pom.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
