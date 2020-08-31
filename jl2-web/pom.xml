@@ -18,10 +18,10 @@
         </repository>
     </repositories>
     <distributionManagement>
-    <snapshotRepository>
-        <id>nklab-snapshot</id>
-        <url>gs://artifacts.slide4vr.nklab.dev/snapshot</url>
-    </snapshotRepository>
+        <snapshotRepository>
+            <id>nklab-snapshot</id>
+            <url>gs://artifacts.slide4vr.nklab.dev/snapshot</url>
+        </snapshotRepository>
     </distributionManagement>
     <build>
         <extensions>
