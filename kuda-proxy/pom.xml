@@ -2,10 +2,9 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>pptx4vr</groupId>
-    <artifactId>slide4vr-server</artifactId>
+    <groupId>dev.koduki</groupId>
+    <artifactId>kuda-proxy</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>slide4vr-server</name>
     <properties>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <maven.compiler.parameters>true</maven.compiler.parameters>
@@ -13,18 +12,12 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus-plugin.version>1.6.0.Final</quarkus-plugin.version>
+        <quarkus-plugin.version>1.7.0.Final</quarkus-plugin.version>
         <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-        <quarkus.platform.version>1.6.0.Final</quarkus.platform.version>
-        <surefire-plugin.version>2.22.1</surefire-plugin.version>
+        <quarkus.platform.version>1.7.0.Final</quarkus.platform.version>
+        <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     </properties>
-    <repositories>
-        <repository>
-            <id>koduki-repos</id>
-            <url>https://raw.githubusercontent.com/koduki/koduki.github.io/mvn-repo/</url>
-        </repository>
-    </repositories>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -34,16 +27,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>libraries-bom</artifactId>
-                <version>7.0.0</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
@@ -56,51 +46,15 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-multipart-provider</artifactId>
+            <artifactId>quarkus-rest-client</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-undertow</artifactId>
+            <artifactId>quarkus-resteasy-jsonb</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-openapi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>3.12.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-storage</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-datastore</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-tasks</artifactId>
-            <version>1.30.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.opencensus</groupId>
-            <artifactId>opencensus-api</artifactId>
-            <version>0.26.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-jwt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.orz.pascal</groupId>
-            <artifactId>jl2</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <artifactId>quarkus-resteasy-jackson</artifactId>
         </dependency>
         <dependency>
             <groupId>dev.nklab.jl2</groupId>
@@ -117,6 +71,8 @@
                 <executions>
                     <execution>
                         <goals>
+                            <goal>prepare</goal>
+                            <goal>prepare-tests</goal>
                             <goal>build</goal>
                         </goals>
                     </execution>
@@ -132,8 +88,22 @@
                 <configuration>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                        <maven.home>${maven.home}</maven.home>
                     </systemPropertyVariables>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jboss.jandex</groupId>
+                <artifactId>jandex-maven-plugin</artifactId>
+                <version>1.0.7</version>
+                <executions>
+                    <execution>
+                        <id>make-index</id>
+                        <goals>
+                            <goal>jandex</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -159,6 +129,8 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
+                                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                        <maven.home>${maven.home}</maven.home>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
