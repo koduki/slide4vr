@@ -42,7 +42,7 @@ public class SlideService {
         df.setTimeZone(tz);
 
         var key = UUID.randomUUID().toString();
-        uploader.upload(userId, key, slide.getSlide());
+        uploader.upload(userId, key, slide.getSlide(), slide.getExtention());
 
         var datastore = DatastoreOptions.getDefaultInstance().getService();
         var slideKey = datastore.newKeyFactory()

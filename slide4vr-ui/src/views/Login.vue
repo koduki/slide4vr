@@ -26,7 +26,10 @@
             <div class="lead text-center text-md-left text-muted mb-6 mb-lg-8">
               <p>
                 VRの世界でプレゼンをしてみたいと思いませんか？
-                <a href="https://virtualcast.jp/" target="_blank">VirtualCast</a>を使えば好きなアバターでスライドを使って本当に発表をしているかのように配信をすることが出来ます。
+                <a
+                  href="https://virtualcast.jp/"
+                  target="_blank"
+                >VirtualCast</a>を使えば好きなアバターでスライドを使って本当に発表をしているかのように配信をすることが出来ます。
               </p>
               <p>「やってみたいけど準備が大変そう。。。」Slide4VRはそんなあなたを支援します。</p>
             </div>
@@ -68,18 +71,20 @@
             <!-- Icon -->
             <div class="icon text-primary mb-3">
               <img src="/powerpoint.jpg" width="24px" />
+              <img src="/icon_1r_24.png" width="24px" />
             </div>
 
             <!-- Heading -->
-            <h3>PowerPointファイルをアップロードするだけ</h3>
+            <h3>PDFやPowerPointファイルをアップロードするだけ</h3>
 
             <!-- Text -->
             <p class="text-muted mb-6 mb-md-0">
               バーチャルキャストのプレゼンに使う「
               <a
-                href="https://virtualcast.jp/wiki/doku.php?id=virtualcast:item:whiteboard" target="_blank"
+                href="https://virtualcast.jp/wiki/doku.php?id=virtualcast:item:whiteboard"
+                target="_blank"
               >ホワイトボード</a>」はインターネット上の「誰でもアクセスできる状態」場所に置いた画像を表示する事が出来ます。
-              <br />Slide4VRではアップロードしたPPTXファイルを自動で画像に変換してWebからアクセス出来る場所に配置します。自分でサーバを用意する必要はありません。
+              <br />Slide4VRではアップロードしたPDFまたはPPTXファイルを自動で画像に変換してWebからアクセス出来る場所に配置します。自分でサーバを用意する必要はありません。
             </p>
           </div>
           <div class="col-12 col-md-4 aos-init aos-animate" data-aos="fade-up" data-aos-delay="50">
@@ -93,9 +98,10 @@
 
             <!-- Text -->
             <p class="text-muted mb-6 mb-md-0">
-              ホワイトボード用のURLをVirtualCastの設定画面から一つ一つ指定するのは大変です。Slide4VRではPPTXから変換した画像のURLを自動で
+              ホワイトボード用のURLをVirtualCastの設定画面から一つ一つ指定するのは大変です。Slide4VRではPDFまたはPPTXから変換した画像のURLを自動で
               <a
-                href="https://virtualcast.jp/wiki/doku.php?id=virtualcast:config#whiteboard" target="_blank"
+                href="https://virtualcast.jp/wiki/doku.php?id=virtualcast:config#whiteboard"
+                target="_blank"
               >config.json形式</a>に変換して表示します。設定ファイルにコピペするだけでOKなので面倒な作業を大幅に短縮できます。
             </p>
           </div>
@@ -120,15 +126,14 @@
       <!-- / .container -->
     </section>
     <footer role="contentinfo" class="py-6 lh-1 bg-white">
-
-    <div class="container">
-      <div class="row">
-        <div class="col-12 text-center text-sm">
-          <p class="mb-0">Powered by なからぼ</p>
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center text-sm">
+            <p class="mb-0">Powered by なからぼ</p>
+          </div>
         </div>
       </div>
-    </div>
-  </footer>
+    </footer>
   </div>
 </template>
 
@@ -136,10 +141,10 @@
 .login {
   margin: 50px;
 }
-.feature{
+.feature {
   padding-bottom: 50px;
 }
-footer{
+footer {
   margin: 50px;
 }
 </style>

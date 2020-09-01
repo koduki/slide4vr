@@ -123,7 +123,6 @@ public class DistributedTracer {
 
                 return callback.apply(Optional.of(span));
             }
-
         } else {
             return callback.apply(Optional.empty());
         }
@@ -146,6 +145,5 @@ public class DistributedTracer {
         } catch (SpanContextParseException ex) {
             throw new RuntimeException(ex);
         }
-
     }
 }
