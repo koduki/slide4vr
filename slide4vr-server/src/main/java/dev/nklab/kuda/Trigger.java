@@ -23,23 +23,31 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
  */
 @Dependent
 public class Trigger {
-
-    @ConfigProperty(name = "kudaproxy.trigger.url")
-    String triggerUrl;
-
+    
+    @ConfigProperty(name = "kudaproxy.trigger.url1")
+    String triggerUrl1;
+    
+    @ConfigProperty(name = "kudaproxy.trigger.url2")
+    String triggerUrl2;
+    
     public Trigger() {
     }
-
-    public String callTrigger(Map<String, Object> params) throws JsonProcessingException {
+    
+    public String callTrigger(Map<String, Object> params, String predicate) throws JsonProcessingException {
+        var targetUrls = Map.of(
+                "pdf", triggerUrl1,
+                "pptx", triggerUrl2
+        );
+        
         var isTrace = ConfigProvider.getConfig().getOptionalValue("dev.nklab.profile.trace", Boolean.class);
         var traceparent = DistributedTracer.trace().isTrace(isTrace.orElse(false)).getTraceparent();
-
+        
         var client = HttpClient.newHttpClient();
         var request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(params)))
                 .version(HttpClient.Version.HTTP_1_1)
                 .header("Content-Type", "application/json")
-                .uri(URI.create(triggerUrl));
+                .uri(URI.create(targetUrls.get(predicate)));
         
         if (traceparent.isPresent()) {
             request.header("traceparent", traceparent.get());
@@ -48,7 +56,7 @@ public class Trigger {
         client.sendAsync(request.build(), HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
                 .thenAccept(System.out::println);
-
+        
         return "done async";
     }
 }

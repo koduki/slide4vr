@@ -60,7 +60,7 @@ pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
 
-run-local-server.sh
+run-local-*.sh
 
 # Production Configuration
 .env.production

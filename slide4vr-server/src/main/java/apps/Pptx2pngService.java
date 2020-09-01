@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import javax.enterprise.context.Dependent;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import dev.nklab.jl2.profile.Trace;
-import dev.nklab.jl2.logging.Logger;
 import dev.nklab.kuda.Trigger;
 import java.io.UncheckedIOException;
 import java.util.Map;
@@ -22,8 +21,6 @@ import javax.inject.Inject;
 @Dependent
 public class Pptx2pngService {
 
-    private final Logger logger = Logger.getLogger("slide4vr");
-
     @Inject
     Trigger trigger;
 
@@ -35,9 +32,9 @@ public class Pptx2pngService {
     String locationId;
 
     @Trace
-    public void request(String userId, String key) {
+    public void request(String userId, String key, String contentType, String extention) {
         try {
-            var pptxName = userId + "/" + key + ".pptx";
+            var pptxName = userId + "/" + key + extention;
             var pngDir = userId + "/" + key;
 
             var params = Map.of(
@@ -46,10 +43,12 @@ public class Pptx2pngService {
                     "targetParams", Map.of("args", pptxName + "," + pngDir)
             );
 
-            trigger.callTrigger(params);
+            var predicate = (SlideFormBean.CONTENT_TYPE_PDF.equals(contentType)) ? "pdf"
+                    : (SlideFormBean.CONTENT_TYPE_PPTX.equals(contentType)) ? "pptx"
+                    : null;
+            trigger.callTrigger(params, predicate);
         } catch (JsonProcessingException ex) {
             throw new UncheckedIOException(ex);
         }
     }
-
 }

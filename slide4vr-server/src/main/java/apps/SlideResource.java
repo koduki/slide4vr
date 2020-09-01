@@ -18,10 +18,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import dev.nklab.jl2.profile.WebTrace;
 import dev.nklab.jl2.logging.Logger;
 import javax.ws.rs.DELETE;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 @Path("/slide")
 public class SlideResource {
@@ -75,10 +75,12 @@ public class SlideResource {
     @Produces(MediaType.APPLICATION_JSON)
     @WebTrace
     @Authenticated
-    public Response create(@Context SecurityContext ctx, @MultipartForm SlideFormBean slide) throws IOException {
+    public Response create(@Context SecurityContext ctx, MultipartFormDataInput form) throws IOException {
+        var slide = new SlideFormBean(form.getFormDataMap());
+
         var id = ctx.getUserPrincipal().getName();
         var key = slideService.create(id, slide);
-        pptx2pngService.request(id, key);
+        pptx2pngService.request(id, key, slide.getContentType(), slide.getExtention());
 
         return Response.ok(
                 String.format("{message:'%s', data-size:'%d'}",

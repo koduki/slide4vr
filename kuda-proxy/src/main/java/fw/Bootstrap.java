@@ -5,12 +5,15 @@
  */
 package fw;
 
+import static cn.orz.pascal.jl2.Extentions.*;
+import dev.nklab.jl2.logging.Logger;
 import dev.nklab.jl2.profile.TracingBootstrap;
 import java.io.IOException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  *
@@ -19,10 +22,16 @@ import javax.inject.Inject;
 @ApplicationScoped
 public class Bootstrap {
 
+    @ConfigProperty(name = "kudaproxy.target.name")
+    String targetName;
+
+    private final Logger logger = Logger.getLogger("slide4vr");
+
     @Inject
     TracingBootstrap tracingBootstrap;
 
     public void handle(@Observes @Initialized(ApplicationScoped.class) Object event) throws IOException {
         tracingBootstrap.init();
+        logger.info("init", $("target application", targetName));
     }
 }

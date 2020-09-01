@@ -29,9 +29,9 @@ public class SlideUploader {
     String slideBucket;
 
     @Trace
-    public void upload(String userId, String key, byte[] data) {
+    public void upload(String userId, String key, byte[] data, String extention) {
         var storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        var blobId = BlobId.of(pptxBucket, userId + "/" + key + ".pptx");
+        var blobId = BlobId.of(pptxBucket, userId + "/" + key + extention);
         var blobInfo = BlobInfo.newBuilder(blobId).build();
         storage.create(blobInfo, data);
     }

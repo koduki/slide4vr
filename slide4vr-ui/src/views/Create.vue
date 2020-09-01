@@ -18,9 +18,9 @@
             <input type="text" class="form-control" v-model="item.title" />
           </div>
           <div class="form-group">
-            <label>ファイル(pptx):</label>
+            <label>ファイル(pdf, pptx):</label>
             <div class="custom-file">
-              <input type="file" accept=".pptx" class="custom-file-input" id="inputFile" @change="onDrop" />
+              <input type="file" accept=".pptx, .pdf" class="custom-file-input" id="inputFile" @change="onDrop" />
               <label class="custom-file-label" for="inputFile">{{filepath}}</label>
             </div>
           </div>
