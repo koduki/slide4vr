@@ -1,0 +1,25 @@
+name: slide-upload-flow
+endpoints:
+  - name: uploader
+    url: https://new-app1.run.app
+  - name: pdf2vr
+    url: https://new-app2.run.app
+  - name: pptx2vr
+    url: https://new-app3.run.app
+  - name: update-status
+    url: https://new-app4.run.app
+triggers:
+  - name: on-post-upload
+    source: uploader
+    target:
+      cond:
+        - key: pdf
+          name: pdf2vr
+        - key: pptx
+          name: pptx2vr
+  - name: on-transformed-pdf
+    source: pdf2vr
+    target: update-status
+  - name: on-transformed-pptx
+    source: pptx2vr
+    target: update-status

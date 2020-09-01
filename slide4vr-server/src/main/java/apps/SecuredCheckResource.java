@@ -21,7 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import dev.nklab.jl2.profile.WebTrace;
+import dev.nklab.jl2.web.profile.WebTrace;
 
 /**
  *

@@ -8,7 +8,7 @@ package apps;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.StorageOptions;
-import dev.nklab.jl2.profile.Trace;
+import dev.nklab.jl2.web.profile.Trace;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.enterprise.context.Dependent;

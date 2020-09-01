@@ -8,8 +8,8 @@ package apps;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javax.enterprise.context.Dependent;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import dev.nklab.jl2.profile.Trace;
-import dev.nklab.kuda.Trigger;
+import dev.nklab.jl2.web.profile.Trace;
+import dev.nklab.kuda.core.Trigger;
 import java.io.UncheckedIOException;
 import java.util.Map;
 import javax.inject.Inject;
@@ -43,10 +43,10 @@ public class Pptx2pngService {
                     "targetParams", Map.of("args", pptxName + "," + pngDir)
             );
 
-            var predicate = (SlideFormBean.CONTENT_TYPE_PDF.equals(contentType)) ? "pdf"
+            var condKey = (SlideFormBean.CONTENT_TYPE_PDF.equals(contentType)) ? "pdf"
                     : (SlideFormBean.CONTENT_TYPE_PPTX.equals(contentType)) ? "pptx"
                     : null;
-            trigger.callTrigger(params, predicate);
+            trigger.callTrigger(params, condKey);
         } catch (JsonProcessingException ex) {
             throw new UncheckedIOException(ex);
         }

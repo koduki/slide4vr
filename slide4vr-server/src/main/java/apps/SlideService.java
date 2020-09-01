@@ -7,7 +7,7 @@ import com.google.cloud.datastore.Query;
 import com.google.cloud.datastore.StructuredQuery;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import static dev.nklab.jl2.logging.gcp.datastore.Extentions.*;
+import static dev.nklab.jl2.web.gcp.datastore.Extentions.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.enterprise.context.Dependent;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import dev.nklab.jl2.profile.Trace;
+import dev.nklab.jl2.web.profile.Trace;
 import java.util.UUID;
 import javax.inject.Inject;
 
