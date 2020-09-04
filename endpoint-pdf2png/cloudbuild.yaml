@@ -1,3 +1,0 @@
-steps:
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: ['run', 'deploy', 'endpoint-slide4vr-pdf2png', '--image', 'gcr.io/$PROJECT_ID/kuda-proxy', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']
