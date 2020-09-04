@@ -1,6 +1,6 @@
 # Slide4VR
 
-Slide4VR is a presentation support system in [Virtual Cast](https://virtualcast.jp/).
+Slide4VR is a presentation support system in [VirtualCast](https://virtualcast.jp/).
 
 ## Modules
 
