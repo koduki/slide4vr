@@ -1,7 +1,9 @@
 package app;
 
-import dev.nklab.kuda.Trigger;
-import dev.nklab.jl2.profile.DistributedTracer;
+import static dev.nklab.jl2.Extentions.$;
+import dev.nklab.jl2.web.logging.Logger;
+import dev.nklab.kuda.core.Trigger;
+import dev.nklab.jl2.web.profile.DistributedTracer;
 import io.opencensus.contrib.http.util.HttpTraceAttributeConstants;
 import io.opencensus.trace.AttributeValue;
 import java.io.IOException;
@@ -23,17 +25,22 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Path("/")
 public class ProxyResource {
 
+    private final Logger logger = Logger.getLogger("kuda-proxy");
+
     @Inject
     Trigger trigger;
 
-    @ConfigProperty(name = "kudaproxy.target.name")
+    @ConfigProperty(name = "kuda.proxy.target.name")
     String targetName;
 
-    @ConfigProperty(name = "kudaproxy.target.url")
+    @ConfigProperty(name = "kuda.proxy.target.url")
     String targetUrl;
 
-    @ConfigProperty(name = "kudaproxy.target.method")
+    @ConfigProperty(name = "kuda.proxy.target.method")
     String targetMethod;
+
+    @ConfigProperty(name = "kuda.proxy.trigger.condkey")
+    String condKey;
 
     @ConfigProperty(name = "dev.nklab.profile.trace")
     boolean isTrace;
@@ -60,9 +67,11 @@ public class ProxyResource {
                 }
 
                 // Exec target application
+                logger.debug("target-start", $("", ""));
                 callTarget(forwardRequest, targetMethod, query);
 
-                return trigger.callTrigger(params);
+                logger.debug("trigger-start", $("condKey", condKey));
+                return trigger.callTrigger(params, condKey);
             } catch (IOException | InterruptedException ex) {
                 throw new RuntimeException(ex);
             }

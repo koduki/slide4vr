@@ -22,10 +22,10 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @ApplicationScoped
 public class Bootstrap {
 
-    @ConfigProperty(name = "kuda.proxy.target.name")
+    @ConfigProperty(name = "dev.nklab.profile.appname")
     String targetName;
 
-    private final Logger logger = Logger.getLogger("slide4vr");
+    private final Logger logger = Logger.getLogger("kuda");
 
     @Inject
     TracingBootstrap tracingBootstrap;

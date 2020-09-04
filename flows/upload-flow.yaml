@@ -1,0 +1,19 @@
+name: slide-upload-flow
+endpoints:
+  - name: uploader
+    url: http://localhost:8080
+    triggers:
+      - name: pdf2png
+        condition: pdf
+      - name: pptx2png
+        condition: pptx
+  - name: pdf2png
+    url: http://0.0.0.0:5000
+    triggers:
+      - name: on-transformed
+  - name: pptx2png
+    url: http://0.0.0.0:5001
+    triggers:
+      - name: on-transformed
+  - name: on-transformed
+    url: http://0.0.0.0:6000
