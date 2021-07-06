@@ -1,0 +1,52 @@
+main:
+    params: [input]
+    steps:
+    - condition:
+        switch:
+            - condition: ${input.condKey == "pdf"}
+              next: pdf2png
+            - condition: ${input.condKey == "pptx"}
+              next: pptx2png
+        next: return_value
+    - pdf2png:
+        call: http.post
+        args:
+            url: https://endpoint-slide4vr-pdf2png-dnb6froqha-uc.a.run.app/forward
+            body: ${input}
+            auth:
+                type: OIDC
+            headers:
+                X-Cloud-Trace-Context: ${input.tracecontext}
+        next: updateStatus
+        result: result_pdf2png
+    - pptx2png:
+        call: http.post
+        args:
+            url: https://endpoint-slide4vr-pptx2png-dnb6froqha-uc.a.run.app/forward
+            body: ${input}
+            auth:
+                type: OIDC
+        next: updateStatus
+        result: result_pptx2png
+    - updateStatus:
+        call: http.post
+        args:
+            url: https://endpoint-slide4vr-updatestatus-dnb6froqha-uc.a.run.app
+            body: ${input}
+            auth:
+                type: OIDC
+            headers:
+                X-Cloud-Trace-Context: ${input.tracecontext}
+        result: result_uppdatestatus
+    - ssg:
+        call: http.post
+        args:
+            url: https://endpoint-slide4vr-ssg-dnb6froqha-uc.a.run.app/forward
+            body: ${input}
+            auth:
+                type: OIDC
+            headers:
+                X-Cloud-Trace-Context: ${input.tracecontext}
+        result: result_ssg
+    - return_value:
+        return: ${result_ssg}

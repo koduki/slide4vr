@@ -1,0 +1,8 @@
+steps:
+- id: workflow-deploy
+  name: 'gcr.io/cloud-builders/gcloud'
+  args: ['workflows', 'deploy', 'wf_slide4vr', 
+  '--source', 'flow.yaml'
+  ]
+
+
